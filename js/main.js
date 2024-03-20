@@ -6,125 +6,199 @@ let acc = null;
 let operation = null;
 let result = null;
 let operationResult = null;
+let totalized = false;
 
 buttonsContainer.addEventListener("click", buttonHandler);
 
-function buttonHandler(event){
+function buttonHandler(event) {
   const clickedElement = event.target;
 
-  const buttonValue = clickedElement.textContent;
+  if (clickedElement.tagName === "BUTTON") {
+    const buttonValue = clickedElement.textContent;
 
-  switch(buttonValue){
-    case 'C':
-      break;
-    
-    case 'DELETE':
-      break;
+    switch (buttonValue) {
+      case "C":
+        reset();
+        operationsScreen.textContent = "";
+        totalScreen.textContent = "0";
+        break;
 
-    case '÷':
-      checkOperator(buttonValue);
-      break;
-
-    case 'x':
-      checkOperator(buttonValue);
-      break;
-
-    case '-':
-      checkOperator(buttonValue);
-      break;
-
-    case '+':
-      checkOperator(buttonValue);
-      break;
-
-    case '=':
-      break;
-
-    case '.':
-      break;
-
-    default:
-      if(operation === null){
-        if(result === null){
-          result = buttonValue;
-        }else{
-          result += buttonValue;
+      case "DEL":
+        if (operation === null) {
+          if(totalized){
+            return;
+          }
+          // Borrar dígitos del primer número
+          if (result.length === 1) {
+            result = "0";
+            totalScreen.textContent = result;
+          } else {
+            result = result.substring(0, result.length - 1);
+            totalScreen.textContent = result;
+          }
+        } else if (operationsScreen.textContent.charAt(operationsScreen.textContent.length - 1) !== operation) {
+          // Borrar dígitos del resultado
+          if (result.length === 1) {
+            result = "0";
+            operationsScreen.textContent = operationsScreen.textContent.substring(0, operationsScreen.textContent.length - 1);
+          } else {
+            result = result.substring(0, result.length - 1);
+            operationsScreen.textContent = operationsScreen.textContent.substring(0, operationsScreen.textContent.length - 1);
+          }
+          operationResult = makeOperation(operation, acc, result);
+          totalScreen.textContent = operationResult;
         }
-        totalScreen.textContent = result;
-      }else{
-        if(result === null){
-          result = buttonValue;
-        }else{
-          result += buttonValue;
+        break;
+
+      case "÷":
+        checkOperator(buttonValue);
+        break;
+
+      case "x":
+        checkOperator(buttonValue);
+        break;
+
+      case "-":
+        checkOperator(buttonValue);
+        break;
+
+      case "+":
+        checkOperator(buttonValue);
+        break;
+
+      case "=":
+        if (operationResult === null) {
+          return;
         }
-        operationsScreen.textContent += buttonValue;
-        operationResult = makeOperation(operation, acc, result);
-        totalScreen.textContent ="=" + operationResult;
-      }
-      break;
+        if (result !== null || operationResult !== null) {
+          totalScreen.textContent = operationResult;
+          operationsScreen.textContent = "";
+          operation = null;
+          totalized = true;
+        }
+        break;
+
+      case ".":
+        if (operation === null) {
+          if (result === null) {
+            result = "0.";
+            totalScreen.textContent = result;
+          }else{
+            result += ".";
+            totalScreen.textContent = result;
+          }
+        } else {
+          if (result === null) {
+            result = "0.";
+            operationsScreen.textContent += result;
+          } else if (!result.includes(".")) {
+            result += ".";
+            operationsScreen.textContent += ".";
+          }
+        }
+        break;
+
+      default:
+        if (totalized && operation === null) {
+          reset();
+        }
+        if (operation === null) {
+          if (result === null || result === "0") {
+            result = buttonValue;
+          } else {
+            result += buttonValue;
+          }
+          totalScreen.textContent = result;
+        } else {
+          if (result === null || result === "0") {
+            result = buttonValue;
+          } else {
+            result += buttonValue;
+          }
+          operationsScreen.textContent += buttonValue;
+          operationResult = makeOperation(operation, acc, result);
+          
+          if(operationResult === Infinity || isNaN(operationResult)){
+            reset();
+            totalScreen.textContent = "LOL";
+            operationsScreen.textContent = "";
+            reset();
+          }else{
+            totalScreen.textContent = "=" + operationResult;
+          }
+        }
+        break;
+    }
   }
 }
 
-function checkOperator(buttonValue){
+function checkOperator(buttonValue) {
   if (result !== null) {
     operation = buttonValue;
     operationsScreen.textContent = acc + operation;
     setAccumulator();
+  } else if(result === null && operation === null){
+    operation = buttonValue;
+    acc = "0";
+    operationsScreen.textContent = acc + operation;
   }else{
     operation = buttonValue;
     operationsScreen.textContent = acc + operation;
   }
 }
 
-
-function setAccumulator(){
-  if(result !== null && operationResult === null){
+function setAccumulator() {
+  if (result !== null && operationResult === null) {
     acc = result;
-  }else{
+  } else {
     acc = operationResult;
   }
   operationsScreen.textContent = acc + operation;
   result = null;
 }
 
-function makeOperation(operation,acc,result){
+function reset() {
+  acc = null;
+  operation = null;
+  result = null;
+  operationResult = null;
+  totalized = false;
+}
+
+function makeOperation(operation, acc, result) {
   let total = null;
-  switch(operation){
+  switch (operation) {
     case "+":
-      total = add(parseInt(acc), parseInt(result));
+      total = add(parseFloat(acc), parseFloat(result));
       return total;
-      break;
 
     case "-":
-      total = subtract(parseInt(acc), parseInt(result));
+      total = subtract(parseFloat(acc), parseFloat(result));
       return total;
-      break;
 
     case "÷":
-      total = divide(parseInt(acc), parseInt(result));
+      total = divide(parseFloat(acc), parseFloat(result));
       return total;
-      break;
 
     case "x":
-      total = multiply(parseInt(acc), parseInt(result));
+      total = multiply(parseFloat(acc), parseFloat(result));
       return total;
-      break;
   }
 }
 
-
-function add(a,b){
+function add(a, b) {
   return a + b;
 }
 
-function subtract(a,b){
+function subtract(a, b) {
   return a - b;
 }
 
-function multiply(a,b){
+function multiply(a, b) {
   return a * b;
 }
 
-function divide(a,b){
-  return a / b;
-}
+function divide(a, b) {
+    return a / b;
+  }
+

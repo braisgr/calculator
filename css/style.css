@@ -1,0 +1,91 @@
+body{
+  background-color: #000000c9;
+}
+
+main{
+  height: 90vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.calculator-container{
+  width: 400px;
+  background-color: #bbe0ed;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid black;
+  border-radius: 12px;
+}
+
+.screens{
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: 2px solid #000000c9;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+}
+
+.screen{
+  height: 4vh;
+  text-align: right;
+  line-height: 1;
+  padding: 0.7rem;
+  font-size: 2.5rem;
+}
+
+.buttons{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+button{
+  width: 90px;
+  height: 80px;
+  cursor: pointer;
+  border-radius: 4px;
+  font-size: 2rem;
+}
+
+.row{
+  display: flex;
+  gap: 0.8rem;
+}
+
+.github-link{
+  width: 180px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+a{
+  text-decoration: none;
+  color: #000000c9;
+  width: 90%;
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+button:hover{
+  filter: brightness(90%);
+}
+
+.c-button{
+  background-color: #DC8686;
+}
+
+.del-button{
+  background-color: #8bb2ce;
+}
+
+.operator-button{
+  background-color: #D5F0C1;
+}
